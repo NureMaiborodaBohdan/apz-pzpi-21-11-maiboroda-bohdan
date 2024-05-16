@@ -1,8 +1,16 @@
 package handler
 
-import "github.com/gin-gonic/gin"
+import (
+	"apz-pzpi-21-11-maiboroda-bohdan-task2/pkg/service"
+	"github.com/gin-gonic/gin"
+)
 
 type Handlers struct {
+	service *service.Service
+}
+
+func NewHandler(services *service.Service) *Handlers {
+	return &Handlers{service: services}
 }
 
 func (h *Handlers) InitRoutes() *gin.Engine {
