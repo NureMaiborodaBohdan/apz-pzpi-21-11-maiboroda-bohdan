@@ -53,11 +53,6 @@ func (h *Handlers) InitRoutes() *gin.Engine {
 				users.POST("/:userID/accesscontrols", h.createAccessControl)
 				users.PUT("/:userID/accesscontrols/:accessID", h.updateAccessControl)
 				users.DELETE("/:userID/accesscontrols/:accessID", h.deleteAccessControl)
-
-				users.GET("/:userID/notifications/:notificationID", h.getNotificationByID)
-				users.POST("/:userID/notifications", h.createNotification)
-				users.PUT("/:userID/notifications/:notificationID", h.updateNotification)
-				users.DELETE("/:userID/notifications/:notificationID", h.deleteNotification)
 			}
 		}
 	}
