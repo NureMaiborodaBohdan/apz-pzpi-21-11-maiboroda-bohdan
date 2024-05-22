@@ -6,18 +6,18 @@ import (
 	"apz-pzpi-21-11-maiboroda-bohdan-task2/pkg/repository"
 	"apz-pzpi-21-11-maiboroda-bohdan-task2/pkg/service"
 	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"log"
 	"os"
 )
 
 func main() {
 	if err := initConfig(); err != nil {
-		log.Fatalf("error initializing configs: %s", err.Error())
+		logrus.Fatalf("error initializing configs: %s", err.Error())
 	}
 
 	if err := godotenv.Load(); err != nil {
-		log.Fatalf("Error loading env variables: %s", err.Error())
+		logrus.Fatalf("Error loading env variables: %s", err.Error())
 	}
 
 	db, err := repository.NewMysqlDb(repository.Config{
@@ -28,7 +28,7 @@ func main() {
 		Dbname:   viper.GetString("db.dbname"),
 	})
 	if err != nil {
-		log.Fatalf("Failed to initialize db %s", err.Error())
+		logrus.Fatalf("Failed to initialize db %s", err.Error())
 	}
 
 	repos := repository.NewRepository(db)
@@ -38,7 +38,7 @@ func main() {
 	srv := new(AlcoSafe.Server)
 
 	if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
-		log.Fatalf("error running server: %s", err.Error())
+		logrus.Fatalf("error running server: %s", err.Error())
 	}
 }
 

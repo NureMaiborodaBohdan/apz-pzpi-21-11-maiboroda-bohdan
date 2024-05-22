@@ -1,8 +1,15 @@
 package service
 
-import "apz-pzpi-21-11-maiboroda-bohdan-task2/pkg/repository"
+import (
+	AlcoSafe "apz-pzpi-21-11-maiboroda-bohdan-task2"
+	"apz-pzpi-21-11-maiboroda-bohdan-task2/pkg/repository"
+)
 
 type Authorization interface {
+	CreateAdmin(user AlcoSafe.User) (int, error)
+	CreateUser(user AlcoSafe.User) (int, error)
+	GenerateToken(username, password string) (string, error)
+	ParseToken(token string) (int, error)
 }
 
 type Company interface {
@@ -34,5 +41,7 @@ type Service struct {
 }
 
 func NewService(repos *repository.Repository) *Service {
-	return &Service{}
+	return &Service{
+		Authorization: NewAuthService(repos.Authorization),
+	}
 }

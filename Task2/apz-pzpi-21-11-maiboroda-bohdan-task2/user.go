@@ -1,10 +1,10 @@
 package AlcoSafe
 
 type User struct {
-	UserID     uint64 `json:"UserID"`
-	Username   string `json:"Username"`
-	Email      string `json:"Email"`
-	Password   string `json:"Password"`
+	UserID     int    `json:"UserID" db:"UserID"`
+	Username   string `json:"Username" binding:"required" db:"Username"`
+	Email      string `json:"Email" binding:"required" db:"Email"`
+	Password   string `json:"Password" binding:"required" db:"Password"`
 	Role       string `json:"Role"`
 	Name       string `json:"Name"`
 	Surname    string `json:"Surname"`

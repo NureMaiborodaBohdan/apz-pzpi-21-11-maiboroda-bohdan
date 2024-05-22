@@ -27,11 +27,11 @@ CREATE TABLE `User` (
                         `Email` VARCHAR(255) NOT NULL,
                         `Password` VARCHAR(255) NOT NULL,
                         `Role` ENUM('Admin', 'User') NOT NULL,
-                        `Name` VARCHAR(255) NOT NULL,
-                        `Surname` VARCHAR(255) NOT NULL,
-                        `Patronymic` VARCHAR(255) NOT NULL,
-                        `CompanyID` INT UNSIGNED NOT NULL,
-                        `Sex` ENUM('Male', 'Female') NOT NULL,
+                        `Name` VARCHAR(255) ,
+                        `Surname` VARCHAR(255) ,
+                        `Patronymic` VARCHAR(255) ,
+                        `CompanyID` INT UNSIGNED ,
+                        `Sex` ENUM('Male', 'Female') ,
                         FOREIGN KEY (`CompanyID`) REFERENCES `Company` (`CompanyID`) ON DELETE CASCADE
 );
 

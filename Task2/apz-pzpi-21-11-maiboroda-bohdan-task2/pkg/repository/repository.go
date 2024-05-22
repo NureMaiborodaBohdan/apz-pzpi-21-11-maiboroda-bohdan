@@ -1,8 +1,14 @@
 package repository
 
-import "github.com/jmoiron/sqlx"
+import (
+	AlcoSafe "apz-pzpi-21-11-maiboroda-bohdan-task2"
+	"github.com/jmoiron/sqlx"
+)
 
 type Authorization interface {
+	CreateAdmin(user AlcoSafe.User) (int, error)
+	CreateUser(user AlcoSafe.User) (int, error)
+	GetUser(username, password string) (AlcoSafe.User, error)
 }
 
 type Company interface {
@@ -34,5 +40,7 @@ type Repository struct {
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
-	return &Repository{}
+	return &Repository{
+		Authorization: NewAuthMysql(db),
+	}
 }
