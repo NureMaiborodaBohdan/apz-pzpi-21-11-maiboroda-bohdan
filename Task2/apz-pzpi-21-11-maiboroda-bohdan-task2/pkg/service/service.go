@@ -30,6 +30,10 @@ type AccessControl interface {
 type Notification interface {
 }
 
+type Admin interface {
+	GetUserByID(userID int) (AlcoSafe.User, error)
+}
+
 type Service struct {
 	Authorization
 	Company
@@ -38,10 +42,12 @@ type Service struct {
 	TestResult
 	AccessControl
 	Notification
+	Admin
 }
 
 func NewService(repos *repository.Repository) *Service {
 	return &Service{
 		Authorization: NewAuthService(repos.Authorization),
+		Admin:         NewAdminService(repos.Admin),
 	}
 }

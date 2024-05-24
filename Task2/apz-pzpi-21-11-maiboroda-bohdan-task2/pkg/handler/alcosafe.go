@@ -97,3 +97,83 @@ func (h *Handlers) updateTestResult(c *gin.Context) {
 func (h *Handlers) deleteTestResult(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "deleteTestResult endpoint"})
 }
+
+func (h *Handlers) getUserByID(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "getUserByID endpoint"})
+}
+
+func (h *Handlers) getUsers(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "getUsers endpoint"})
+}
+
+func (h *Handlers) createUser(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "createUser endpoint"})
+}
+
+func (h *Handlers) updateUser(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "updateUser endpoint"})
+}
+
+func (h *Handlers) deleteUser(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "deleteUser endpoint"})
+}
+
+func (h *Handlers) getCurrentUser(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "getCurrentUser endpoint"})
+}
+
+func (h *Handlers) updateCurrentUser(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "updateCurrentUser endpoint"})
+}
+
+func (h *Handlers) getUserTestResults(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "getUserTestResults endpoint"})
+}
+
+func (h *Handlers) getUserTestResultByID(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "getUserTestResultByID endpoint"})
+}
+
+func (h *Handlers) createUserTestResult(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "createUserTestResult endpoint"})
+}
+
+func (h *Handlers) updateUserTestResult(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "updateUserTestResult endpoint"})
+}
+
+func (h *Handlers) deleteUserTestResult(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "deleteUserTestResult endpoint"})
+}
+
+func (h *Handlers) getUserNotifications(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "getUserNotifications endpoint"})
+}
+
+func (h *Handlers) getUserNotificationByID(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "getUserNotificationByID endpoint"})
+}
+
+func (h *Handlers) getUserAccessControls(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "getUserAccessControls endpoint"})
+}
+
+func (h *Handlers) getUserAccessControlByID(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "getUserAccessControlByID endpoint"})
+}
+
+func (h *Handlers) backupData(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "backupData endpoint"})
+}
+
+func (h *Handlers) restoreData(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "restoreData endpoint"})
+}
+
+func (h *Handlers) exportData(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "exportData endpoint"})
+}
+
+func (h *Handlers) importData(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "importData endpoint"})
+}

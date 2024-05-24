@@ -28,7 +28,9 @@ type AccessControl interface {
 
 type Notification interface {
 }
-
+type Admin interface {
+	GetUserByID(userID int) (AlcoSafe.User, error)
+}
 type Repository struct {
 	Authorization
 	Company
@@ -37,10 +39,12 @@ type Repository struct {
 	TestResult
 	AccessControl
 	Notification
+	Admin
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthMysql(db),
+		Admin:         NewAdminMysql(db),
 	}
 }

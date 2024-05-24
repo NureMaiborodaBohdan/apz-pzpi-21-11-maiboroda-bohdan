@@ -23,37 +23,68 @@ func (h *Handlers) InitRoutes() *gin.Engine {
 		auth.POST("/login", h.login)
 	}
 
-	api := router.Group("/api")
+	admin := router.Group("/admin", h.adminRequired)
 	{
-		companies := api.Group("/companies")
+		admin.GET("/companies/:companyID", h.getCompanyByID)
+		admin.POST("/companies", h.createCompany)
+		admin.PUT("/companies/:companyID", h.updateCompany)
+		admin.DELETE("/companies/:companyID", h.deleteCompany)
+
+		company := admin.Group("/companies/:companyID")
 		{
-			companies.GET("/:companyID", h.getCompanyByID)
-			companies.POST("/", h.createCompany)
-			companies.PUT("/:companyID", h.updateCompany)
-			companies.DELETE("/:companyID", h.deleteCompany)
+			company.GET("/locations/:locationID", h.getLocationByID)
+			company.POST("/locations", h.createLocation)
+			company.PUT("/locations/:locationID", h.updateLocation)
+			company.DELETE("/locations/:locationID", h.deleteLocation)
 
-			companies.GET("/:companyID/locations/:locationID", h.getLocationByID)
-			companies.POST("/:companyID/locations", h.createLocation)
-			companies.PUT("/:companyID/locations/:locationID", h.updateLocation)
-			companies.DELETE("/:companyID/locations/:locationID", h.deleteLocation)
+			company.GET("/thresholds/:thresholdID", h.getThresholdByID)
+			company.POST("/thresholds", h.createThreshold)
+			company.PUT("/thresholds/:thresholdID", h.updateThreshold)
+			company.DELETE("/thresholds/:thresholdID", h.deleteThreshold)
+		}
 
-			companies.GET("/:companyID/thresholds/:thresholdID", h.getThresholdByID)
-			companies.POST("/:companyID/thresholds", h.createThreshold)
-			companies.PUT("/:companyID/thresholds/:thresholdID", h.updateThreshold)
-			companies.DELETE("/:companyID/thresholds/:thresholdID", h.deleteThreshold)
+		users := admin.Group("/users")
+		{
+			users.GET("/", h.getUsers)
+			users.POST("/", h.createUser)
+			users.GET("/:userID", h.getUserByID)
+			users.PUT("/:userID", h.updateUser)
+			users.DELETE("/:userID", h.deleteUser)
+		}
 
-			users := companies.Group("/:companyID/users")
-			{
-				users.GET("/:userID/testresults/:testID", h.getTestResultByID)
-				users.POST("/:userID/testresults", h.createTestResult)
-				users.PUT("/:userID/testresults/:testID", h.updateTestResult)
-				users.DELETE("/:userID/testresults/:testID", h.deleteTestResult)
+		admin.GET("/testresults/:testID", h.getTestResultByID)
+		admin.POST("/testresults", h.createTestResult)
+		admin.PUT("/testresults/:testID", h.updateTestResult)
+		admin.DELETE("/testresults/:testID", h.deleteTestResult)
 
-				users.GET("/:userID/accesscontrols/:accessID", h.getAccessControlByID)
-				users.POST("/:userID/accesscontrols", h.createAccessControl)
-				users.PUT("/:userID/accesscontrols/:accessID", h.updateAccessControl)
-				users.DELETE("/:userID/accesscontrols/:accessID", h.deleteAccessControl)
-			}
+		admin.GET("/notifications/:notificationID", h.getNotificationByID)
+		admin.POST("/notifications", h.createNotification)
+		admin.DELETE("/notifications/:notificationID", h.deleteNotification)
+
+		data := admin.Group("/data")
+		{
+			data.POST("/backup", h.backupData)
+			data.POST("/restore", h.restoreData)
+			data.GET("/export", h.exportData)
+			data.POST("/import", h.importData)
+		}
+	}
+
+	api := router.Group("/api", h.userIndetity)
+	{
+		user := api.Group("/user")
+		{
+			user.GET("/:userID/testresults", h.getUserTestResults)
+			user.GET("/:userID/testresults/:testID", h.getUserTestResultByID)
+			user.POST("/:userID/testresults", h.createUserTestResult)
+			user.PUT("/:userID/testresults/:testID", h.updateUserTestResult)
+			user.DELETE("/:userID/testresults/:testID", h.deleteUserTestResult)
+
+			user.GET("/:userID/notifications", h.getUserNotifications)
+			user.GET("/:userID/notifications/:notificationID", h.getUserNotificationByID)
+
+			user.GET("/:userID/accesscontrols", h.getUserAccessControls)
+			user.GET("/:userID/accesscontrols/:accessID", h.getUserAccessControlByID)
 		}
 	}
 
