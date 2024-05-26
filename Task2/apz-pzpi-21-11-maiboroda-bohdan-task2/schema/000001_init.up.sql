@@ -2,23 +2,18 @@ CREATE TABLE `Location` (
                             `LocationID` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
                             `Country` VARCHAR(255) NOT NULL,
                             `City` VARCHAR(255) NOT NULL,
-                            `Adress` VARCHAR(255) NOT NULL,
+                            `Address` VARCHAR(255) NOT NULL,
                             `PostCode` INT NOT NULL
 );
 
-CREATE TABLE `ThresholdValues` (
-                                   `ThresholdID` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                                   `LegalLimit` DOUBLE NOT NULL
-);
 
 CREATE TABLE `Company` (
                            `CompanyID` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
                            `Name` VARCHAR(255) NOT NULL,
                            `Description` TEXT NOT NULL,
+                           `LegalLimit` DOUBLE NOT NULL,
                            `LocationID` INT UNSIGNED NOT NULL,
-                           `ThresholdID` INT UNSIGNED NOT NULL,
-                           FOREIGN KEY (`LocationID`) REFERENCES `Location` (`LocationID`) ON DELETE CASCADE,
-                           FOREIGN KEY (`ThresholdID`) REFERENCES `ThresholdValues` (`ThresholdID`) ON DELETE CASCADE
+                           FOREIGN KEY (`LocationID`) REFERENCES `Location` (`LocationID`) ON DELETE CASCADE
 );
 
 CREATE TABLE `User` (

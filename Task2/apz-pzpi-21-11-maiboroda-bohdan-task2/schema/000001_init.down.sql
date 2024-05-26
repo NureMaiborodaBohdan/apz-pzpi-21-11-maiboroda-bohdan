@@ -1,7 +1,6 @@
-DROP TABLE AccessControl;
-DROP TABLE Notification;
-DROP TABLE TestResult;
-DROP TABLE User;
-DROP TABLE Company;
-DROP TABLE Location;
-DROP TABLE ThresholdValues;
+DROP TABLE IF EXISTS AccessControl;
+DROP TABLE IF EXISTS Notification;
+DROP TABLE IF EXISTS TestResult;
+DROP TABLE IF EXISTS User;
+DROP TABLE IF EXISTS Company;
+DROP TABLE IF EXISTS Location;

@@ -1,37 +1,111 @@
 package handler
 
-import "github.com/gin-gonic/gin"
+import (
+	AlcoSafe "apz-pzpi-21-11-maiboroda-bohdan-task2"
+	"github.com/gin-gonic/gin"
+	"net/http"
+	"strconv"
+)
+
+func (h *Handlers) getCompanies(c *gin.Context) {
+	companies, err := h.service.Company.GetAll()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, companies)
+}
 
 func (h *Handlers) getCompanyByID(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "getCompanyByID endpoint"})
+	companyID, err := strconv.Atoi(c.Param("companyID"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid company ID"})
+		return
+	}
+	company, err := h.service.Company.GetByID(companyID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, company)
 }
 
 func (h *Handlers) createCompany(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "createCompany endpoint"})
+	var company AlcoSafe.Company
+	if err := c.BindJSON(&company); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid request body"})
+		return
+	}
+	id, err := h.service.Company.Create(company)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"CompanyID": id,
+	})
+}
+
+func (h *Handlers) deleteCompany(c *gin.Context) {
+	companyID, err := strconv.Atoi(c.Param("companyID"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid company ID"})
+		return
+	}
+	if err := h.service.Company.Delete(companyID); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Company deleted"})
 }
 
 func (h *Handlers) updateCompany(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "updateCompany endpoint"})
 }
 
-func (h *Handlers) deleteCompany(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "deleteCompany endpoint"})
-}
-
 func (h *Handlers) getLocationByID(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "getLocationByID endpoint"})
+	locationID, err := strconv.Atoi(c.Param("locationID"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid location ID"})
+		return
+	}
+	location, err := h.service.Location.GetByID(locationID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, location)
 }
 
 func (h *Handlers) createLocation(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "createLocation endpoint"})
+	var location AlcoSafe.Location
+	if err := c.BindJSON(&location); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid request body"})
+		return
+	}
+	id, err := h.service.Location.Create(location)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"id": id})
+}
+
+func (h *Handlers) deleteLocation(c *gin.Context) {
+	locationID, err := strconv.Atoi(c.Param("locationID"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid location ID"})
+		return
+	}
+	if err := h.service.Location.Delete(locationID); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Location deleted"})
 }
 
 func (h *Handlers) updateLocation(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "updateLocation endpoint"})
-}
-
-func (h *Handlers) deleteLocation(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "deleteLocation endpoint"})
 }
 
 func (h *Handlers) getNotificationByID(c *gin.Context) {
@@ -50,22 +124,6 @@ func (h *Handlers) deleteNotification(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "deleteNotification endpoint"})
 }
 
-func (h *Handlers) getThresholdByID(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "getThresholdByID endpoint"})
-}
-
-func (h *Handlers) createThreshold(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "createThreshold endpoint"})
-}
-
-func (h *Handlers) updateThreshold(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "updateThreshold endpoint"})
-}
-
-func (h *Handlers) deleteThreshold(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "deleteThreshold endpoint"})
-}
-
 func (h *Handlers) getAccessControlByID(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "getAccessControlByID endpoint"})
 }
@@ -81,7 +139,9 @@ func (h *Handlers) updateAccessControl(c *gin.Context) {
 func (h *Handlers) deleteAccessControl(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "deleteAccessControl endpoint"})
 }
-
+func (h *Handlers) getTestResult(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "getTestResult endpoint"})
+}
 func (h *Handlers) getTestResultByID(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "getTestResultByID endpoint"})
 }

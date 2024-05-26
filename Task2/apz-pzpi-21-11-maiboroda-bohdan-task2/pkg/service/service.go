@@ -13,12 +13,16 @@ type Authorization interface {
 }
 
 type Company interface {
+	Create(company AlcoSafe.Company) (int, error)
+	GetAll() ([]AlcoSafe.Company, error)
+	GetByID(companyID int) (AlcoSafe.Company, error)
+	Delete(companyID int) error
 }
 
 type Location interface {
-}
-
-type Thresholds interface {
+	Create(location AlcoSafe.Location) (int, error)
+	GetByID(locationID int) (AlcoSafe.Location, error)
+	Delete(locationID int) error
 }
 
 type TestResult interface {
@@ -38,7 +42,6 @@ type Service struct {
 	Authorization
 	Company
 	Location
-	Thresholds
 	TestResult
 	AccessControl
 	Notification
@@ -49,5 +52,7 @@ func NewService(repos *repository.Repository) *Service {
 	return &Service{
 		Authorization: NewAuthService(repos.Authorization),
 		Admin:         NewAdminService(repos.Admin),
+		Company:       NewCompanyService(repos.Company),
+		Location:      NewLocationService(repos.Location),
 	}
 }

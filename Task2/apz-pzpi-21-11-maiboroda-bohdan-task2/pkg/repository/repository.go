@@ -12,12 +12,16 @@ type Authorization interface {
 }
 
 type Company interface {
+	Create(company AlcoSafe.Company) (int, error)
+	GetAll() ([]AlcoSafe.Company, error)
+	GetByID(companyID int) (AlcoSafe.Company, error)
+	Delete(companyID int) error
 }
 
 type Location interface {
-}
-
-type Thresholds interface {
+	Create(location AlcoSafe.Location) (int, error)
+	GetByID(locationID int) (AlcoSafe.Location, error)
+	Delete(locationID int) error
 }
 
 type TestResult interface {
@@ -35,7 +39,6 @@ type Repository struct {
 	Authorization
 	Company
 	Location
-	Thresholds
 	TestResult
 	AccessControl
 	Notification
@@ -46,5 +49,7 @@ func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthMysql(db),
 		Admin:         NewAdminMysql(db),
+		Company:       NewCompanyMysql(db),
+		Location:      NewLocationMysql(db),
 	}
 }
