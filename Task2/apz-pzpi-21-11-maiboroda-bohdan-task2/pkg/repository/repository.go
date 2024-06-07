@@ -34,6 +34,10 @@ type Notification interface {
 }
 type Admin interface {
 	GetUserByID(userID int) (AlcoSafe.User, error)
+	CreateUser(user AlcoSafe.User) (int, error)
+	GetAllUsers() ([]AlcoSafe.User, error)
+	UpdateUser(UserID int, input AlcoSafe.UpdateUserInput) error
+	Delete(UserID int) error
 }
 type Repository struct {
 	Authorization
