@@ -20,7 +20,7 @@ func NewAdminMysql(db *sqlx.DB) *AdminMysql {
 
 func (r *AdminMysql) GetUserByID(userID int) (AlcoSafe.User, error) {
 	var user AlcoSafe.User
-	query := fmt.Sprintf("SELECT UserID, Username, Email, Role FROM User WHERE UserID=?")
+	query := fmt.Sprintf("SELECT UserID, Username, Email, Role, Name, Surname, Patronymic, Sex FROM User WHERE UserID=?")
 	err := r.db.Get(&user, query, userID)
 	if err != nil {
 		log.Printf("Error fetching user by ID %d: %s", userID, err)
@@ -40,9 +40,9 @@ func (r *AdminMysql) CreateUser(user AlcoSafe.User) (int, error) {
 		return 0, fmt.Errorf("user with this email or username already exists")
 	}
 
-	query := fmt.Sprintf("INSERT INTO User (Username, Email, Password, Role, Name, Surname, Patronymic, CompanyID, Sex) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
+	query := fmt.Sprintf("INSERT INTO User (Username, Email, Password, Role, Name, Surname, Patronymic, Sex) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
 
-	result, err := r.db.Exec(query, user.Username, user.Email, user.Password, user.Role, user.Name, user.Surname, user.Patronymic, user.CompanyID, user.Sex)
+	result, err := r.db.Exec(query, user.Username, user.Email, user.Password, user.Role, user.Name, user.Surname, user.Patronymic, user.Sex)
 	if err != nil {
 		mysqlErr, ok := err.(*mysql.MySQLError)
 		if ok && mysqlErr.Number == 1062 {
@@ -67,7 +67,7 @@ func (r *AdminMysql) GetAllUsers() ([]AlcoSafe.User, error) {
 	}
 	return users, err
 }
-func (r *AdminMysql) UpdateUser(UserID int, input AlcoSafe.UpdateUserInput) error {
+func (r *AdminMysql) UpdateUser(UserID int, input AlcoSafe.UpdateUserInput, user AlcoSafe.User) error {
 	existingUser, err := r.GetUserByID(UserID)
 	if err != nil {
 		return err

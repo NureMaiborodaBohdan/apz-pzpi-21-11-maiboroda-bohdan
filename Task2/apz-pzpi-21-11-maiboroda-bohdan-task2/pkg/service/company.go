@@ -28,3 +28,10 @@ func (s *CompanyService) GetByID(companyID int) (AlcoSafe.Company, error) {
 func (s *CompanyService) Delete(companyID int) error {
 	return s.repo.Delete(companyID)
 }
+func (s *CompanyService) Update(CompanyID int, input AlcoSafe.UpdateCompany) error {
+	if err := input.Validate(); err != nil {
+		return err
+	}
+
+	return s.repo.Update(CompanyID, input)
+}

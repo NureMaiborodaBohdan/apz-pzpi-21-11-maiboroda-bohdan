@@ -17,12 +17,14 @@ type Company interface {
 	GetAll() ([]AlcoSafe.Company, error)
 	GetByID(companyID int) (AlcoSafe.Company, error)
 	Delete(companyID int) error
+	Update(CompanyID int, input AlcoSafe.UpdateCompany) error
 }
 
 type Location interface {
 	Create(location AlcoSafe.Location) (int, error)
 	GetByID(locationID int) (AlcoSafe.Location, error)
 	Delete(locationID int) error
+	Update(LocationID int, input AlcoSafe.UpdateLocation) error
 }
 
 type TestResult interface {
@@ -39,7 +41,7 @@ type Admin interface {
 	CreateUser(user AlcoSafe.User) (int, error)
 	GetAllUsers() ([]AlcoSafe.User, error)
 	Delete(UserID int) error
-	UpdateUser(UserID int, input AlcoSafe.UpdateUserInput) error
+	UpdateUser(UserID int, input AlcoSafe.UpdateUserInput, user AlcoSafe.User) error
 }
 
 type Service struct {

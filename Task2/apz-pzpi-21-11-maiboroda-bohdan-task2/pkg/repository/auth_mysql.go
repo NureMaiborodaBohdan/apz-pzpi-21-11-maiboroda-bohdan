@@ -14,8 +14,8 @@ func NewAuthMysql(db *sqlx.DB) *AuthMysql {
 }
 
 func (r *AuthMysql) CreateUser(user AlcoSafe.User) (int, error) {
-	query := "INSERT INTO User (Username, Email, Password, Role, Name, Surname, Patronymic, CompanyID, Sex) VALUES (?, ?, ?, 'User', ?, ?, ?, ?, ?)"
-	result, err := r.db.Exec(query, user.Username, user.Email, user.Password)
+	query := "INSERT INTO User (Username, Email, Password, Role, Name, Surname, Patronymic, Sex) VALUES (?, ?, ?, 'User', ?, ?, ?, ?)"
+	result, err := r.db.Exec(query, user.Username, user.Email, user.Password, user.Name, user.Surname, user.Patronymic, user.Sex)
 	if err != nil {
 		return 0, err
 	}
@@ -29,8 +29,8 @@ func (r *AuthMysql) CreateUser(user AlcoSafe.User) (int, error) {
 }
 
 func (r *AuthMysql) CreateAdmin(user AlcoSafe.User) (int, error) {
-	query := "INSERT INTO User (Username, Email, Password, Role, Name, Surname, Patronymic, CompanyID, Sex) VALUES (?, ?, ?, 'Admin', ?, ?, ?, ?, ?)"
-	result, err := r.db.Exec(query, user.Username, user.Email, user.Password)
+	query := "INSERT INTO User (Username, Email, Password, Role, Name, Surname, Patronymic, Sex) VALUES (?, ?, ?, 'Admin', ?, ?, ?, ?)"
+	result, err := r.db.Exec(query, user.Username, user.Email, user.Password, user.Name, user.Surname, user.Patronymic, user.Sex)
 	if err != nil {
 		return 0, err
 	}

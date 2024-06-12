@@ -43,3 +43,31 @@ func (r *LocationMysql) Delete(locationID int) error {
 	_, err := r.db.Exec(query, locationID)
 	return err
 }
+
+func (r *LocationMysql) Update(locationID int, input AlcoSafe.UpdateLocation) error {
+	existingLocation, err := r.GetByID(locationID)
+	if err != nil {
+		return err
+	}
+
+	if input.Country != nil {
+		existingLocation.Country = *input.Country
+	}
+	if input.City != nil {
+		existingLocation.City = *input.City
+	}
+	if input.Address != nil {
+		existingLocation.Address = *input.Address
+	}
+	if input.PostCode != nil {
+		existingLocation.PostCode = *input.PostCode
+	}
+
+	query := "UPDATE Location SET Country=?, City=?, Address=?, PostCode=? WHERE LocationID=?"
+	_, err = r.db.Exec(query, existingLocation.Country, existingLocation.City, existingLocation.Address, existingLocation.PostCode, locationID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

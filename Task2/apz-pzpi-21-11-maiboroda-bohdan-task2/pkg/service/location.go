@@ -24,3 +24,11 @@ func (s *LocationService) GetByID(locationID int) (AlcoSafe.Location, error) {
 func (s *LocationService) Delete(locationID int) error {
 	return s.repo.Delete(locationID)
 }
+
+func (s *LocationService) Update(LocationID int, input AlcoSafe.UpdateLocation) error {
+	if err := input.Validate(); err != nil {
+		return err
+	}
+
+	return s.repo.Update(LocationID, input)
+}

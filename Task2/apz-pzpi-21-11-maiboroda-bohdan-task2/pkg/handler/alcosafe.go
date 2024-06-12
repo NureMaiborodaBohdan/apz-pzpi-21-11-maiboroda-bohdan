@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 func (h *Handlers) getCompanies(c *gin.Context) {
@@ -60,7 +61,32 @@ func (h *Handlers) deleteCompany(c *gin.Context) {
 }
 
 func (h *Handlers) updateCompany(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "updateCompany endpoint"})
+	CompanyID := c.Param("companyID")
+	id, err := strconv.Atoi(CompanyID)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "Invalid id param")
+		return
+	}
+
+	var input AlcoSafe.UpdateCompany
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = h.service.Company.Update(id, input)
+	if err != nil {
+		if strings.Contains(err.Error(), "Duplicate entry") {
+			newErrorResponse(c, http.StatusConflict, "Company with this name already exists")
+			return
+		}
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, statusResponse{
+		Status: "Ok",
+	})
 }
 
 func (h *Handlers) getLocationByID(c *gin.Context) {
@@ -105,7 +131,32 @@ func (h *Handlers) deleteLocation(c *gin.Context) {
 }
 
 func (h *Handlers) updateLocation(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "updateLocation endpoint"})
+	LocationID := c.Param("locationID")
+	id, err := strconv.Atoi(LocationID)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "Invalid id param")
+		return
+	}
+
+	var input AlcoSafe.UpdateLocation
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = h.service.Location.Update(id, input)
+	if err != nil {
+		if strings.Contains(err.Error(), "Duplicate entry") {
+			newErrorResponse(c, http.StatusConflict, "Location with this name already exists")
+			return
+		}
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, statusResponse{
+		Status: "Ok",
+	})
 }
 
 func (h *Handlers) getNotificationByID(c *gin.Context) {
@@ -206,12 +257,13 @@ func (h *Handlers) updateUser(c *gin.Context) {
 	}
 
 	var input AlcoSafe.UpdateUserInput
+	var userInput AlcoSafe.User
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	err = h.service.Admin.UpdateUser(userID, input)
+	err = h.service.Admin.UpdateUser(userID, input, userInput)
 
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())

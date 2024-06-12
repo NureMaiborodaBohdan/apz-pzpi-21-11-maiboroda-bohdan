@@ -47,3 +47,30 @@ func (r *CompanyMysql) Delete(companyID int) error {
 	_, err := r.db.Exec(query, companyID)
 	return err
 }
+func (r *CompanyMysql) Update(CompanyID int, input AlcoSafe.UpdateCompany) error {
+	existingCompany, err := r.GetByID(CompanyID)
+	if err != nil {
+		return err
+	}
+
+	if input.Name != nil {
+		existingCompany.Name = *input.Name
+	}
+	if input.Description != nil {
+		existingCompany.Description = *input.Description
+	}
+	if input.LegalLimit != nil {
+		existingCompany.LegalLimit = *input.LegalLimit
+	}
+	if input.LocationID != nil {
+		existingCompany.LocationID = *input.LocationID
+	}
+
+	query := "UPDATE Company SET Name=?, Description=?, LegalLimit=?, LocationID=? WHERE CompanyID=?"
+	_, err = r.db.Exec(query, existingCompany.Name, existingCompany.Description, existingCompany.LegalLimit, existingCompany.LocationID, CompanyID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

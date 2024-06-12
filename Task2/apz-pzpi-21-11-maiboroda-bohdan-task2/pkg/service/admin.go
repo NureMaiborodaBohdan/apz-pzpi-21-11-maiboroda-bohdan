@@ -21,12 +21,12 @@ func (s *AdministratorService) CreateUser(user AlcoSafe.User) (int, error) {
 	user.Password = generatePasswordHash(user.Password)
 	return s.repo.CreateUser(user)
 }
-func (s *AdministratorService) UpdateUser(UserID int, input AlcoSafe.UpdateUserInput) error {
+func (s *AdministratorService) UpdateUser(UserID int, input AlcoSafe.UpdateUserInput, user AlcoSafe.User) error {
 	if err := input.Validate(); err != nil {
 		return err
 	}
-
-	return s.repo.UpdateUser(UserID, input)
+	user.Password = generatePasswordHash(user.Password)
+	return s.repo.UpdateUser(UserID, input, user)
 }
 func (s *AdministratorService) GetAllUsers() ([]AlcoSafe.User, error) {
 	return s.repo.GetAllUsers()
