@@ -4,6 +4,7 @@ import (
 	AlcoSafe "apz-pzpi-21-11-maiboroda-bohdan-task2"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -87,6 +88,14 @@ func (h *Handlers) updateCompany(c *gin.Context) {
 	c.JSON(http.StatusOK, statusResponse{
 		Status: "Ok",
 	})
+}
+func (h *Handlers) getLocations(c *gin.Context) {
+	location, err := h.service.Location.GetAll()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, location)
 }
 
 func (h *Handlers) getLocationByID(c *gin.Context) {
@@ -201,10 +210,6 @@ func (h *Handlers) createTestResult(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "createTestResult endpoint"})
 }
 
-func (h *Handlers) updateTestResult(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "updateTestResult endpoint"})
-}
-
 func (h *Handlers) deleteTestResult(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "deleteTestResult endpoint"})
 }
@@ -297,15 +302,41 @@ func (h *Handlers) updateCurrentUser(c *gin.Context) {
 }
 
 func (h *Handlers) getUserTestResults(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "getUserTestResults endpoint"})
-}
-
-func (h *Handlers) getUserTestResultByID(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "getUserTestResultByID endpoint"})
+	userID, err := strconv.Atoi(c.Param("userID"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid user ID"})
+		return
+	}
+	testResults, err := h.service.TestResult.GetAll(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, testResults)
 }
 
 func (h *Handlers) createUserTestResult(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "createUserTestResult endpoint"})
+	userID, err := strconv.Atoi(c.Param("userID"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid user ID"})
+		return
+	}
+
+	var testresult AlcoSafe.TestResult
+	if err := c.ShouldBindJSON(&testresult); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	testresult.UserID = userID
+
+	id, err := h.service.TestResult.Create(userID, testresult)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"id": id})
 }
 
 func (h *Handlers) updateUserTestResult(c *gin.Context) {
@@ -317,33 +348,104 @@ func (h *Handlers) deleteUserTestResult(c *gin.Context) {
 }
 
 func (h *Handlers) getUserNotifications(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "getUserNotifications endpoint"})
-}
+	userID, err := strconv.Atoi(c.Param("userID"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid user ID"})
+		return
+	}
 
-func (h *Handlers) getUserNotificationByID(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "getUserNotificationByID endpoint"})
+	notifications, err := h.service.Notification.GetAllUserNotification(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch notifications"})
+		return
+	}
+
+	c.JSON(http.StatusOK, notifications)
 }
 
 func (h *Handlers) getUserAccessControls(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "getUserAccessControls endpoint"})
-}
+	userID, err := strconv.Atoi(c.Param("userID"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid user ID"})
+		return
+	}
 
-func (h *Handlers) getUserAccessControlByID(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "getUserAccessControlByID endpoint"})
+	accessControl, err := h.service.AccessControl.GetUserAccessControl(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch access control"})
+		return
+	}
+
+	c.JSON(http.StatusOK, accessControl)
 }
 
 func (h *Handlers) backupData(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "backupData endpoint"})
+	backupPath := "backup.sql"
+
+	file, err := os.Create(backupPath)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to create backup file",
+		})
+		return
+	}
+	defer file.Close()
+
+	if err := h.service.Admin.BackupData(backupPath); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to backup data",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Data backup successful",
+	})
 }
 
 func (h *Handlers) restoreData(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "restoreData endpoint"})
+	restorePath := "backup.sql"
+
+	if err := h.service.Admin.RestoreData(restorePath); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to restore data",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Data restore successful",
+	})
 }
 
 func (h *Handlers) exportData(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "exportData endpoint"})
+	exportPath := "export.xlsx"
+
+	if err := h.service.Admin.ExportData(exportPath); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to export data"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Data export successful"})
 }
 
 func (h *Handlers) importData(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "importData endpoint"})
+	file, err := c.FormFile("file")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	uploadPath := file.Filename
+	if err := c.SaveUploadedFile(file, uploadPath); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save file"})
+		return
+	}
+
+	if err := h.service.Admin.ImportData(uploadPath); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Data imported successfully"})
 }

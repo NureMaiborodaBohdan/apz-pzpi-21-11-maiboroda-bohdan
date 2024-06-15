@@ -4,9 +4,10 @@ import "errors"
 
 type TestResult struct {
 	TestID       int     `json:"TestID" db:"TestID"`
-	UserID       int     `json:"UserID" db:"UserID" binding:"required"`
-	TestTime     string  `json:"TestTime" db:"TestTime" binding:"required"`
+	UserID       int     `json:"UserID" db:"UserID"`
+	TestTime     string  `json:"TestTime" db:"TestTime"`
 	AlcoholLevel float64 `json:"AlcoholLevel" db:"AlcoholLevel" binding:"required"`
+	IsDrunk      bool    `json:"IsDrunk" db:"IsDrunk"`
 	Description  string  `json:"Description" db:"Description"`
 }
 
@@ -33,15 +34,11 @@ type Notification struct {
 	UserID         int    `json:"UserID" db:"UserID" binding:"required"`
 }
 
-type ThresholdValues struct {
-	ThresholdID int     `json:"ThresholdID" db:"ThresholdID"`
-	LegalLimit  float64 `json:"LegalLimit" db:"LegalLimit" binding:"required"`
-}
-
 type AccessControl struct {
 	AccessID   int    `json:"AccessID" db:"AccessID"`
 	UserID     int    `json:"UserID" db:"UserID" binding:"required"`
 	AccessTime string `json:"AccessTime" db:"AccessTime" binding:"required"`
+	Access     string `json:"Access" db:"Access" binding:"required"`
 }
 
 type UpdateLocation struct {

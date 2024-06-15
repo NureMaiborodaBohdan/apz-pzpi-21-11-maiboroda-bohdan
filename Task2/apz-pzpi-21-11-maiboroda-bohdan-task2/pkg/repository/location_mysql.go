@@ -27,7 +27,12 @@ func (r *LocationMysql) Create(location AlcoSafe.Location) (int, error) {
 	id := int(id64)
 	return id, nil
 }
-
+func (r *LocationMysql) GetAll() ([]AlcoSafe.Location, error) {
+	var locations []AlcoSafe.Location
+	query := "SELECT * FROM Location"
+	err := r.db.Select(&locations, query)
+	return locations, err
+}
 func (r *LocationMysql) GetByID(locationID int) (AlcoSafe.Location, error) {
 	var location AlcoSafe.Location
 	query := "SELECT LocationID, Country, City, Address, PostCode FROM Location WHERE LocationID = ?"

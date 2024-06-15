@@ -52,5 +52,6 @@ CREATE TABLE `AccessControl` (
                                  `AccessID` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
                                  `UserID` INT UNSIGNED NOT NULL,
                                  `AccessTime` DATETIME NOT NULL,
+                                 `Access` ENUM('Allowed', 'Rejected') ,
                                  FOREIGN KEY (`UserID`) REFERENCES `User` (`UserID`) ON DELETE CASCADE
 );

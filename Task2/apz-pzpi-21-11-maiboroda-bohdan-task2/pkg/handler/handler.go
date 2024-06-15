@@ -25,17 +25,12 @@ func (h *Handlers) InitRoutes() *gin.Engine {
 
 	api := router.Group("/api", h.userIndetity)
 	{
-		user := api.Group("/user")
+		user := api.Group("/user/:userID")
 		{
 			user.GET("/testresults", h.getUserTestResults)
-			user.GET("/testresults/:testID", h.getUserTestResultByID)
 			user.POST("/testresults", h.createUserTestResult)
-
 			user.GET("/notifications", h.getUserNotifications)
-			user.GET("/notifications/:notificationID", h.getUserNotificationByID)
-
 			user.GET("/accesscontrols", h.getUserAccessControls)
-			user.GET("/accesscontrols/:accessID", h.getUserAccessControlByID)
 		}
 
 		admin := api.Group("/admin", h.adminRequired)
@@ -46,6 +41,7 @@ func (h *Handlers) InitRoutes() *gin.Engine {
 			admin.PUT("/companies/:companyID", h.updateCompany)
 			admin.DELETE("/companies/:companyID", h.deleteCompany)
 
+			admin.GET("/locations", h.getLocations)
 			admin.GET("/locations/:locationID", h.getLocationByID)
 			admin.POST("/locations", h.createLocation)
 			admin.PUT("/locations/:locationID", h.updateLocation)
@@ -62,7 +58,6 @@ func (h *Handlers) InitRoutes() *gin.Engine {
 
 			admin.GET("/testresults", h.getTestResult)
 			admin.GET("/testresults/:testID", h.getTestResultByID)
-			admin.PUT("/testresults/:testID", h.updateTestResult)
 			admin.DELETE("/testresults/:testID", h.deleteTestResult)
 
 			admin.GET("/notifications/:notificationID", h.getNotificationByID)

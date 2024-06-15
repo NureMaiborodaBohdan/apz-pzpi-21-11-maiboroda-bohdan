@@ -16,7 +16,9 @@ func NewLocationService(repo repository.Location) *LocationService {
 func (s *LocationService) Create(location AlcoSafe.Location) (int, error) {
 	return s.repo.Create(location)
 }
-
+func (s *LocationService) GetAll() ([]AlcoSafe.Location, error) {
+	return s.repo.GetAll()
+}
 func (s *LocationService) GetByID(locationID int) (AlcoSafe.Location, error) {
 	return s.repo.GetByID(locationID)
 }

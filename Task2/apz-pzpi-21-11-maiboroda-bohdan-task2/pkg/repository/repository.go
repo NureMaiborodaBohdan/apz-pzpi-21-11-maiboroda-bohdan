@@ -22,17 +22,22 @@ type Company interface {
 type Location interface {
 	Create(location AlcoSafe.Location) (int, error)
 	GetByID(locationID int) (AlcoSafe.Location, error)
+	GetAll() ([]AlcoSafe.Location, error)
 	Delete(locationID int) error
 	Update(LocationID int, input AlcoSafe.UpdateLocation) error
 }
 
 type TestResult interface {
+	Create(userID int, testresult AlcoSafe.TestResult) (int, error)
+	GetAll(userID int) ([]AlcoSafe.TestResult, error)
 }
 
 type AccessControl interface {
+	GetUserAccessControl(userID int) ([]AlcoSafe.AccessControl, error)
 }
 
 type Notification interface {
+	GetAllUserNotification(userID int) ([]AlcoSafe.Notification, error)
 }
 type Admin interface {
 	GetUserByID(userID int) (AlcoSafe.User, error)
@@ -40,6 +45,10 @@ type Admin interface {
 	GetAllUsers() ([]AlcoSafe.User, error)
 	UpdateUser(UserID int, user AlcoSafe.UpdateUserInput, input AlcoSafe.User) error
 	Delete(UserID int) error
+	BackupData(backupPath string) error
+	RestoreData(backupPath string) error
+	ImportData(backupPath string) error
+	ExportData(backupPath string) error
 }
 type Repository struct {
 	Authorization
@@ -57,5 +66,8 @@ func NewRepository(db *sqlx.DB) *Repository {
 		Admin:         NewAdminMysql(db),
 		Company:       NewCompanyMysql(db),
 		Location:      NewLocationMysql(db),
+		TestResult:    NewTestResultMysql(db),
+		Notification:  NewNotificationMysql(db),
+		AccessControl: NewAccessControlMysql(db),
 	}
 }

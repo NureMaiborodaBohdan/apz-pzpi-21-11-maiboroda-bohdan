@@ -24,16 +24,21 @@ type Location interface {
 	Create(location AlcoSafe.Location) (int, error)
 	GetByID(locationID int) (AlcoSafe.Location, error)
 	Delete(locationID int) error
+	GetAll() ([]AlcoSafe.Location, error)
 	Update(LocationID int, input AlcoSafe.UpdateLocation) error
 }
 
 type TestResult interface {
+	Create(userID int, testresult AlcoSafe.TestResult) (int, error)
+	GetAll(userID int) ([]AlcoSafe.TestResult, error)
 }
 
 type AccessControl interface {
+	GetUserAccessControl(userID int) ([]AlcoSafe.AccessControl, error)
 }
 
 type Notification interface {
+	GetAllUserNotification(userID int) ([]AlcoSafe.Notification, error)
 }
 
 type Admin interface {
@@ -42,6 +47,10 @@ type Admin interface {
 	GetAllUsers() ([]AlcoSafe.User, error)
 	Delete(UserID int) error
 	UpdateUser(UserID int, input AlcoSafe.UpdateUserInput, user AlcoSafe.User) error
+	BackupData(backupPath string) error
+	RestoreData(backupPath string) error
+	ImportData(backupPath string) error
+	ExportData(backupPath string) error
 }
 
 type Service struct {
@@ -60,5 +69,8 @@ func NewService(repos *repository.Repository) *Service {
 		Admin:         NewAdminService(repos.Admin),
 		Company:       NewCompanyService(repos.Company),
 		Location:      NewLocationService(repos.Location),
+		TestResult:    NewTestResultService(repos.TestResult),
+		Notification:  NewNotificationService(repos.Notification),
+		AccessControl: NewAccessControlService(repos.AccessControl),
 	}
 }
