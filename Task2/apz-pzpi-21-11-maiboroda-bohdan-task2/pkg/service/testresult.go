@@ -12,10 +12,21 @@ type TestResultService struct {
 func NewTestResultService(repo repository.TestResult) *TestResultService {
 	return &TestResultService{repo: repo}
 }
+func (s *TestResultService) GetAll() ([]AlcoSafe.TestResult, error) {
+	return s.repo.GetAll()
+}
+func (s *TestResultService) GetByID(testResultID int) (AlcoSafe.TestResult, error) {
+	return s.repo.GetByID(testResultID)
+}
+
 func (s *TestResultService) Create(userID int, testresult AlcoSafe.TestResult) (int, error) {
 	return s.repo.Create(userID, testresult)
 }
 
-func (s *TestResultService) GetAll(userID int) ([]AlcoSafe.TestResult, error) {
-	return s.repo.GetAll(userID)
+func (s *TestResultService) GetUserTestResult(userID int) ([]AlcoSafe.TestResult, error) {
+	return s.repo.GetUserTestResult(userID)
+}
+
+func (s *TestResultService) Delete(testresultID int) error {
+	return s.repo.Delete(testresultID)
 }

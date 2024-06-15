@@ -57,18 +57,23 @@ func (r *TestResultMysql) Create(userID int, testresult AlcoSafe.TestResult) (in
 	}
 
 	access := "Allowed"
+	accessTime := time.Now().Format("2006-01-02 15:04:05")
 	if isDrunk {
 		access = "Rejected"
+		soberingHours := testresult.AlcoholLevel / 0.015
+		accessTime = time.Now().Add(time.Duration(soberingHours) * time.Hour).Format("2006-01-02 15:04:05")
 	}
+
 	accessControl := AlcoSafe.AccessControl{
 		UserID:     userID,
-		AccessTime: time.Now().Format("2006-01-02 15:04:05"),
+		AccessTime: accessTime,
 		Access:     access,
 	}
 	_, err = r.CreateAccessControl(accessControl)
 	if err != nil {
 		return 0, err
 	}
+
 	return int(id), nil
 }
 
@@ -86,9 +91,10 @@ func (r *TestResultMysql) CreateNotification(notification AlcoSafe.Notification)
 
 	return int(id), nil
 }
+
 func (r *TestResultMysql) CreateAccessControl(accessControl AlcoSafe.AccessControl) (int, error) {
 	query := "INSERT INTO AccessControl (UserID, AccessTime, Access) VALUES (?, ?, ?)"
-	res, err := r.db.Exec(query, accessControl.UserID, time.Now(), accessControl.Access)
+	res, err := r.db.Exec(query, accessControl.UserID, accessControl.AccessTime, accessControl.Access)
 	if err != nil {
 		return 0, err
 	}
@@ -100,9 +106,32 @@ func (r *TestResultMysql) CreateAccessControl(accessControl AlcoSafe.AccessContr
 
 	return int(id), nil
 }
-func (r *TestResultMysql) GetAll(userID int) ([]AlcoSafe.TestResult, error) {
+
+func (r *TestResultMysql) GetUserTestResult(userID int) ([]AlcoSafe.TestResult, error) {
 	var testresult []AlcoSafe.TestResult
 	query := "SELECT * FROM TestResult WHERE UserID=?"
 	err := r.db.Select(&testresult, query, userID)
 	return testresult, err
+}
+
+func (r *TestResultMysql) Delete(testResultID int) error {
+	query := "DELETE FROM TestResult WHERE TestResultID = ?"
+	_, err := r.db.Exec(query, testResultID)
+	return err
+}
+
+func (r *TestResultMysql) GetAll() ([]AlcoSafe.TestResult, error) {
+	var testResult []AlcoSafe.TestResult
+	query := "SELECT * FROM TestResult"
+	err := r.db.Select(&testResult, query)
+	return testResult, err
+}
+func (r *TestResultMysql) GetByID(testResultID int) (AlcoSafe.TestResult, error) {
+	var testResult AlcoSafe.TestResult
+	query := "SELECT * FROM TestResult WHERE TestResultID = ?"
+	err := r.db.Get(&testResultID, query, testResultID)
+	if err != nil {
+		return testResult, err
+	}
+	return testResult, nil
 }

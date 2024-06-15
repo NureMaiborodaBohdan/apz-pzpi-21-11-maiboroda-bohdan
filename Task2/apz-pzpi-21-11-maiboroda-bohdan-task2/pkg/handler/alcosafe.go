@@ -168,50 +168,88 @@ func (h *Handlers) updateLocation(c *gin.Context) {
 	})
 }
 
+func (h *Handlers) getAllNotification(c *gin.Context) {
+	notification, err := h.service.Notification.GetAll()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, notification)
+}
 func (h *Handlers) getNotificationByID(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "getNotificationByID endpoint"})
+	notification, err := strconv.Atoi(c.Param("notificationID"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	notificationRes, err := h.service.Notification.GetByID(notification)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, notificationRes)
 }
 
 func (h *Handlers) createNotification(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "createNotification endpoint"})
-}
-
-func (h *Handlers) updateNotification(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "updateNotification endpoint"})
+	var notification AlcoSafe.Notification
+	if err := c.BindJSON(&notification); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid request body"})
+		return
+	}
+	id, err := h.service.Notification.Create(notification)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"id": id})
 }
 
 func (h *Handlers) deleteNotification(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "deleteNotification endpoint"})
+	notificationID, err := strconv.Atoi(c.Param("notificationID"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	if err := h.service.Notification.Delete(notificationID); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Notification deleted"})
 }
 
-func (h *Handlers) getAccessControlByID(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "getAccessControlByID endpoint"})
-}
-
-func (h *Handlers) createAccessControl(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "createAccessControl endpoint"})
-}
-
-func (h *Handlers) updateAccessControl(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "updateAccessControl endpoint"})
-}
-
-func (h *Handlers) deleteAccessControl(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "deleteAccessControl endpoint"})
-}
 func (h *Handlers) getTestResult(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "getTestResult endpoint"})
+	testResult, err := h.service.TestResult.GetAll()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, testResult)
 }
 func (h *Handlers) getTestResultByID(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "getTestResultByID endpoint"})
-}
-
-func (h *Handlers) createTestResult(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "createTestResult endpoint"})
+	testResultID, err := strconv.Atoi(c.Param("testID"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	company, err := h.service.TestResult.GetByID(testResultID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, company)
 }
 
 func (h *Handlers) deleteTestResult(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "deleteTestResult endpoint"})
+	testResultID, err := strconv.Atoi(c.Param("testID"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid testResultID"})
+		return
+	}
+	if err := h.service.TestResult.Delete(testResultID); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Test result deleted"})
 }
 
 func (h *Handlers) getUserByID(c *gin.Context) {
@@ -293,21 +331,13 @@ func (h *Handlers) deleteUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "User deleted"})
 }
 
-func (h *Handlers) getCurrentUser(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "getCurrentUser endpoint"})
-}
-
-func (h *Handlers) updateCurrentUser(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "updateCurrentUser endpoint"})
-}
-
 func (h *Handlers) getUserTestResults(c *gin.Context) {
 	userID, err := strconv.Atoi(c.Param("userID"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid user ID"})
 		return
 	}
-	testResults, err := h.service.TestResult.GetAll(userID)
+	testResults, err := h.service.TestResult.GetUserTestResult(userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
@@ -337,14 +367,6 @@ func (h *Handlers) createUserTestResult(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"id": id})
-}
-
-func (h *Handlers) updateUserTestResult(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "updateUserTestResult endpoint"})
-}
-
-func (h *Handlers) deleteUserTestResult(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "deleteUserTestResult endpoint"})
 }
 
 func (h *Handlers) getUserNotifications(c *gin.Context) {

@@ -30,7 +30,10 @@ type Location interface {
 
 type TestResult interface {
 	Create(userID int, testresult AlcoSafe.TestResult) (int, error)
-	GetAll(userID int) ([]AlcoSafe.TestResult, error)
+	GetUserTestResult(userID int) ([]AlcoSafe.TestResult, error)
+	Delete(testResultID int) error
+	GetAll() ([]AlcoSafe.TestResult, error)
+	GetByID(testResultID int) (AlcoSafe.TestResult, error)
 }
 
 type AccessControl interface {
@@ -38,7 +41,11 @@ type AccessControl interface {
 }
 
 type Notification interface {
+	Create(notification AlcoSafe.Notification) (int, error)
 	GetAllUserNotification(userID int) ([]AlcoSafe.Notification, error)
+	Delete(notificationID int) error
+	GetAll() ([]AlcoSafe.Notification, error)
+	GetByID(notificationID int) (AlcoSafe.Notification, error)
 }
 
 type Admin interface {

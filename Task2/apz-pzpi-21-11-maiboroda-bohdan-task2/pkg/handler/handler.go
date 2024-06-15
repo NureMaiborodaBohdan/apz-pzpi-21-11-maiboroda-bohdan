@@ -60,6 +60,7 @@ func (h *Handlers) InitRoutes() *gin.Engine {
 			admin.GET("/testresults/:testID", h.getTestResultByID)
 			admin.DELETE("/testresults/:testID", h.deleteTestResult)
 
+			admin.GET("/notifications", h.getAllNotification)
 			admin.GET("/notifications/:notificationID", h.getNotificationByID)
 			admin.POST("/notifications", h.createNotification)
 			admin.DELETE("/notifications/:notificationID", h.deleteNotification)
