@@ -3,6 +3,7 @@ package repository
 import (
 	AlcoSafe "apz-pzpi-21-11-maiboroda-bohdan-task2"
 	"github.com/jmoiron/sqlx"
+	"log"
 )
 
 type CompanyMysql struct {
@@ -30,9 +31,17 @@ func (r *CompanyMysql) Create(company AlcoSafe.Company) (int, error) {
 
 func (r *CompanyMysql) GetAll() ([]AlcoSafe.Company, error) {
 	var companies []AlcoSafe.Company
-	query := "SELECT * FROM Company"
+	query := "SELECT c.CompanyID, c.Name, c.Description, c.LegalLimit, c.LocationID, " +
+		"l.Country, l.City, l.Address, l.PostCode " +
+		"FROM Company c " +
+		"INNER JOIN Location l ON c.LocationID = l.LocationID"
 	err := r.db.Select(&companies, query)
-	return companies, err
+	if err != nil {
+		// Log the error or return it based on your application's error handling strategy
+		log.Println("Error fetching companies:", err)
+		return nil, err
+	}
+	return companies, nil
 }
 
 func (r *CompanyMysql) GetByID(companyID int) (AlcoSafe.Company, error) {

@@ -64,3 +64,13 @@ func (h *Handlers) login(c *gin.Context) {
 		"token": token,
 	})
 }
+func (h *Handlers) logout(c *gin.Context) {
+	tokenString := c.Request.Header.Get("Authorization")
+	if tokenString == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Token not provided"})
+		return
+	}
+	tokenString = tokenString[len("Bearer "):]
+	c.SetCookie("token", "", -1, "/", "", false, true)
+	c.JSON(http.StatusOK, gin.H{"message": "Successfully logged out"})
+}

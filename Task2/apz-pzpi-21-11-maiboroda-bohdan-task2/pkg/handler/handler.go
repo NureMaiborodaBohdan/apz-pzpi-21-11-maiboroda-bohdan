@@ -3,6 +3,7 @@ package handler
 import (
 	"apz-pzpi-21-11-maiboroda-bohdan-task2/pkg/service"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 type Handlers struct {
@@ -12,18 +13,36 @@ type Handlers struct {
 func NewHandler(services *service.Service) *Handlers {
 	return &Handlers{service: services}
 }
+func CORSMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:8081")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
+		c.Writer.Header().Set("Access-Control-Expose-Headers", "Authorization")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusOK)
+			return
+		}
+
+		c.Next()
+	}
+}
 
 func (h *Handlers) InitRoutes() *gin.Engine {
 	router := gin.Default()
+	router.Use(CORSMiddleware())
 
-	auth := router.Group("/auth")
+	auth := router.Group("/auth", CORSMiddleware())
 	{
 		auth.POST("/register", h.register)
-		auth.POST("/registeradmin", h.registerAdmin)
+		auth.POST("/registerAdmin", h.registerAdmin)
 		auth.POST("/login", h.login)
+		auth.POST("/logout", h.logout)
 	}
 
-	api := router.Group("/api", h.userIndetity)
+	api := router.Group("/api", CORSMiddleware(), h.userIndetity)
 	{
 		user := api.Group("/user/:userID")
 		{

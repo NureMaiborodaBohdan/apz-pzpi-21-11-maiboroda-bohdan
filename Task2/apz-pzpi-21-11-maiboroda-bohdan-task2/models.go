@@ -9,6 +9,7 @@ type TestResult struct {
 	AlcoholLevel float64 `json:"AlcoholLevel" db:"AlcoholLevel" binding:"required"`
 	IsDrunk      bool    `json:"IsDrunk" db:"IsDrunk"`
 	Description  string  `json:"Description" db:"Description"`
+	Username     string  `json:"Username" db:"Username"`
 }
 
 type Location struct {
@@ -25,6 +26,10 @@ type Company struct {
 	Description string  `json:"Description" db:"Description"`
 	LegalLimit  float64 `json:"LegalLimit" db:"LegalLimit" binding:"required"`
 	LocationID  int     `json:"LocationID" db:"LocationID" binding:"required"`
+	Country     string  `json:"Country" db:"Country"`
+	City        string  `json:"City" db:"City"`
+	Address     string  `json:"Address" db:"Address"`
+	PostCode    int     `json:"PostCode" db:"PostCode"`
 }
 
 type Notification struct {

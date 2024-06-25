@@ -93,7 +93,9 @@ func (r *AdminMysql) UpdateUser(UserID int, input AlcoSafe.UpdateUserInput, user
 
 		existingUser.Email = *input.Email
 	}
-
+	if input.Password != nil {
+		existingUser.Password = *input.Password
+	}
 	if input.Username != nil {
 		checkUsernameQuery := "SELECT UserID FROM User WHERE Username=? AND UserID != ?"
 		var otherUserID int
@@ -125,7 +127,7 @@ func (r *AdminMysql) UpdateUser(UserID int, input AlcoSafe.UpdateUserInput, user
 	}
 
 	if input.CompanyID != nil {
-		existingUser.CompanyID = *input.CompanyID
+		existingUser.CompanyID = input.CompanyID
 	}
 
 	if input.Sex != nil {
@@ -154,7 +156,7 @@ func (r *AdminMysql) BackupData(backupPath string) error {
 		"-u",
 		"root",
 		"-pROOT",
-		" mysql",
+		"mysql",
 	)
 
 	outputFile, err := os.Create(backupPath)
@@ -201,7 +203,7 @@ func (r *AdminMysql) RestoreData(backupPath string) error {
 		"-u",
 		"root",
 		"-pROOT",
-		" mysql",
+		"mysql",
 	)
 
 	mysqlCmd.Stdin = bytes.NewReader(dumpContent)

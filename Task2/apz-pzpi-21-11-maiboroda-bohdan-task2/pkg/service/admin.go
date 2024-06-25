@@ -18,11 +18,23 @@ func (s *AdministratorService) GetUserByID(userID int) (AlcoSafe.User, error) {
 }
 
 func (s *AdministratorService) CreateUser(user AlcoSafe.User) (int, error) {
+	if err := user.ValidatePassword(); err != nil {
+		return 0, err
+	}
+	if err := user.ValidateEmail(); err != nil {
+		return 0, err
+	}
 	user.Password = generatePasswordHash(user.Password)
 	return s.repo.CreateUser(user)
 }
 func (s *AdministratorService) UpdateUser(UserID int, input AlcoSafe.UpdateUserInput, user AlcoSafe.User) error {
 	if err := input.Validate(); err != nil {
+		return err
+	}
+	if err := user.ValidatePassword(); err != nil {
+		return err
+	}
+	if err := user.ValidateEmail(); err != nil {
 		return err
 	}
 	user.Password = generatePasswordHash(user.Password)

@@ -324,7 +324,7 @@ func (h *Handlers) deleteUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid user ID"})
 		return
 	}
-	if err := h.service.Company.Delete(userID); err != nil {
+	if err := h.service.Admin.Delete(userID); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
@@ -386,19 +386,22 @@ func (h *Handlers) getUserNotifications(c *gin.Context) {
 }
 
 func (h *Handlers) getUserAccessControls(c *gin.Context) {
-	userID, err := strconv.Atoi(c.Param("userID"))
+	userID, err := getUserID(c)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid user ID"})
+		newErrorResponse(c, http.StatusUnauthorized, "User not authenticated")
 		return
 	}
 
-	accessControl, err := h.service.AccessControl.GetUserAccessControl(userID)
+	accessControls, err := h.service.GetUserAccessControl(userID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch access control"})
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, accessControl)
+	c.JSON(http.StatusOK, gin.H{
+		"UserID":         userID,
+		"accessControls": accessControls,
+	})
 }
 
 func (h *Handlers) backupData(c *gin.Context) {

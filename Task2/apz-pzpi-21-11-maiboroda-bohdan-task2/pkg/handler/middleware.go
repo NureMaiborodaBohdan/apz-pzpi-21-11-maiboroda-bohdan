@@ -56,7 +56,7 @@ func (h *Handlers) adminRequired(c *gin.Context) {
 		return
 	}
 
-	if user.Role != "Admin" {
+	if strings.ToLower(user.Role) != "admin" {
 		newErrorResponse(c, http.StatusForbidden, "Admin role required")
 		return
 	}

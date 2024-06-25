@@ -3,6 +3,7 @@ package repository
 import (
 	AlcoSafe "apz-pzpi-21-11-maiboroda-bohdan-task2"
 	"github.com/jmoiron/sqlx"
+	"log"
 	"time"
 )
 
@@ -115,17 +116,24 @@ func (r *TestResultMysql) GetUserTestResult(userID int) ([]AlcoSafe.TestResult, 
 }
 
 func (r *TestResultMysql) Delete(testResultID int) error {
-	query := "DELETE FROM TestResult WHERE TestResultID = ?"
+	query := "DELETE FROM TestResult WHERE TestID = ?"
 	_, err := r.db.Exec(query, testResultID)
 	return err
 }
 
 func (r *TestResultMysql) GetAll() ([]AlcoSafe.TestResult, error) {
-	var testResult []AlcoSafe.TestResult
-	query := "SELECT * FROM TestResult"
-	err := r.db.Select(&testResult, query)
-	return testResult, err
+	var testResults []AlcoSafe.TestResult
+	query := "SELECT tr.TestID, tr.UserID, tr.TestTime, tr.AlcoholLevel, tr.IsDrunk, tr.Description, u.Username " +
+		"FROM TestResult tr " +
+		"LEFT JOIN User u ON tr.UserID = u.UserID"
+	err := r.db.Select(&testResults, query)
+	if err != nil {
+		log.Printf("Error fetching test results: %s", err)
+		return nil, err
+	}
+	return testResults, nil
 }
+
 func (r *TestResultMysql) GetByID(testResultID int) (AlcoSafe.TestResult, error) {
 	var testResult AlcoSafe.TestResult
 	query := "SELECT * FROM TestResult WHERE TestResultID = ?"
